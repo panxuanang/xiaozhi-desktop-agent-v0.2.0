@@ -1,1 +1,83 @@
+name: Build Windows Installer
 
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 75
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node for optional official Office Skills
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Fetch official Office Skills when available
+        shell: powershell
+        run: .\scripts\fetch_office_skills.ps1
+
+      - name: Stage private Python runtime and dependencies
+        shell: powershell
+        run: .\scripts\stage_runtime.ps1
+
+      - name: Install Inno Setup
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) {
+            choco install innosetup -y --no-progress --limit-output
+            if ($LASTEXITCODE -notin @(0, 1641, 3010)) {
+              throw "Chocolatey Inno Setup install failed with exit code $LASTEXITCODE"
+            }
+          }
+          if (-not (Test-Path $iscc)) {
+            throw "Inno Setup compiler not found after installation: $iscc"
+          }
+          $info = Get-Item $iscc
+          Write-Host "Inno Setup: $($info.FullName)"
+          Write-Host "Version: $($info.VersionInfo.FileVersion)"
+
+      - name: Build single installer EXE
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (Test-Path .\dist) { Remove-Item .\dist -Recurse -Force }
+          New-Item -ItemType Directory -Force .\dist | Out-Null
+          & $iscc .\installer\xiaozhi.iss
+          if ($LASTEXITCODE -ne 0) { throw "ISCC failed with exit code $LASTEXITCODE" }
+          if (-not (Test-Path .\dist\XiaoZhiSetup.exe)) { throw 'XiaoZhiSetup.exe was not produced' }
+          $file = Get-Item .\dist\XiaoZhiSetup.exe
+          if ($file.Length -lt 10MB) { throw "Installer is unexpectedly small: $($file.Length) bytes" }
+          Get-FileHash .\dist\XiaoZhiSetup.exe -Algorithm SHA256 | Format-List
+
+      - name: Smoke test the built installer
+        shell: powershell
+        run: .\scripts\verify_installer.ps1
+
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: XiaoZhiSetup-windows-x64
+          path: dist/XiaoZhiSetup.exe
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Publish installer on GitHub Release tag
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/XiaoZhiSetup.exe
+          generate_release_notes: true
