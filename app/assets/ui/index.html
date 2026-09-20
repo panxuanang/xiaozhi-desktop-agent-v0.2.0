@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>小智电脑助手</title>
+<style>
+:root{
+  --bg:#f4f6fb;--panel:#ffffff;--panel2:#f8fafc;--text:#111827;--muted:#697386;--line:#e5e9f2;
+  --brand:#111827;--brand2:#334155;--accent:#5b6cff;--accent-soft:#eef0ff;--green:#0f9f6e;--red:#d92d20;--orange:#d97706;
+  --shadow:0 12px 35px rgba(15,23,42,.07);--radius:18px;
+}
+html[data-theme="dark"]{
+  --bg:#0d1117;--panel:#151a22;--panel2:#1b222d;--text:#edf2f7;--muted:#9ba8ba;--line:#293240;
+  --brand:#f8fafc;--brand2:#cbd5e1;--accent:#8b98ff;--accent-soft:#20284a;--green:#3ddc97;--red:#ff6b62;--orange:#f7b955;
+  --shadow:0 14px 42px rgba(0,0,0,.25)
+}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,"Microsoft YaHei UI","Microsoft YaHei",system-ui,sans-serif;overflow:hidden}
+button,input,textarea,select{font:inherit}.app{height:100vh;display:grid;grid-template-columns:238px minmax(0,1fr)}
+.sidebar{background:var(--panel);border-right:1px solid var(--line);padding:20px 14px;display:flex;flex-direction:column;min-height:0}
+.brand{display:flex;align-items:center;gap:11px;padding:6px 8px 20px}.logo{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#111827,#64748b);color:white;display:grid;place-items:center;font-weight:800;font-size:18px;box-shadow:var(--shadow)}
+.brand h1{font-size:17px;margin:0}.brand small{display:block;color:var(--muted);margin-top:3px}.nav{display:flex;flex-direction:column;gap:5px}.nav button{border:0;background:transparent;color:var(--muted);border-radius:11px;text-align:left;padding:11px 12px;cursor:pointer;font-weight:650;display:flex;gap:10px;align-items:center}.nav button:hover{background:var(--panel2);color:var(--text)}.nav button.active{background:var(--accent-soft);color:var(--accent)}
+.nav .ico{width:20px;text-align:center}.sideFoot{margin-top:auto;padding:12px 8px;color:var(--muted);font-size:12px}.sideStatus{display:flex;gap:7px;align-items:center;margin-bottom:6px}.dot{width:8px;height:8px;border-radius:50%;background:#94a3b8}.dot.ok{background:var(--green)}.dot.warn{background:var(--orange)}
+.main{min-width:0;height:100vh;display:flex;flex-direction:column}.topbar{height:68px;flex:0 0 68px;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--panel) 92%,transparent);display:flex;align-items:center;justify-content:space-between;padding:0 26px}.topTitle{font-size:17px;font-weight:750}.topMeta{display:flex;align-items:center;gap:9px;color:var(--muted);font-size:12px}.chip{padding:6px 9px;border:1px solid var(--line);border-radius:999px;background:var(--panel2)}
+.iconBtn{border:1px solid var(--line);background:var(--panel);color:var(--text);width:36px;height:36px;border-radius:10px;cursor:pointer}.iconBtn:hover{background:var(--panel2)}
+.content{flex:1;min-height:0;overflow:auto;padding:24px 28px}.page{display:none;max-width:1220px;margin:0 auto}.page.active{display:block}.pageTitle{display:flex;justify-content:space-between;gap:20px;align-items:flex-end;margin-bottom:18px}.pageTitle h2{margin:0;font-size:24px}.pageTitle p{margin:6px 0 0;color:var(--muted);font-size:13px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}.pad{padding:20px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.stat{padding:16px 18px}.stat b{font-size:25px}.stat span{display:block;color:var(--muted);font-size:12px;margin-top:4px}
+.btn{border:0;background:var(--brand);color:var(--bg);padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:700}.btn:hover{opacity:.9}.btn.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}.btn.accent{background:var(--accent);color:white}.btn.danger{background:#fee4e2;color:#b42318}.btn.small{padding:7px 10px;font-size:12px}.btn:disabled{opacity:.45;cursor:not-allowed}.actions{display:flex;gap:8px;flex-wrap:wrap}
+.field{margin:13px 0}.field label{font-size:12px;font-weight:700;color:var(--muted);display:block;margin:0 0 7px}.input,select,textarea{width:100%;border:1px solid var(--line);border-radius:11px;background:var(--panel);color:var(--text);padding:10px 12px;outline:none}.input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 13%,transparent)}.row{display:flex;gap:9px;align-items:center}.row>*{min-width:0}.grow{flex:1}.check{display:flex;gap:9px;align-items:flex-start;font-size:13px;color:var(--muted);margin:10px 0}.check input{margin-top:2px}.hint{font-size:12px;color:var(--muted);line-height:1.65}.notice{padding:11px 13px;border-radius:11px;background:var(--accent-soft);color:var(--text);font-size:12px;line-height:1.6}.warning{background:#fff7ed;color:#9a3412;border:1px solid #fed7aa}html[data-theme="dark"] .warning{background:#322315;color:#ffd29b;border-color:#60411d}
+/* chat */
+.chatShell{height:calc(100vh - 116px);display:grid;grid-template-rows:minmax(0,1fr) auto;gap:14px}.chatList{overflow:auto;padding:6px 2px 20px;scroll-behavior:smooth}.empty{height:100%;min-height:340px;display:grid;place-items:center;text-align:center;color:var(--muted)}.empty .orb{width:76px;height:76px;margin:0 auto 18px;border-radius:24px;background:linear-gradient(135deg,#111827,#64748b);color:white;display:grid;place-items:center;font-size:30px;box-shadow:0 20px 60px rgba(30,41,59,.2)}.empty h3{color:var(--text);font-size:22px;margin:0 0 8px}.quick{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px}.quick button{border:1px solid var(--line);background:var(--panel);color:var(--text);padding:8px 10px;border-radius:999px;cursor:pointer;font-size:12px}
+.msg{margin:12px 0}.msg.user{display:flex;justify-content:flex-end}.bubble{max-width:min(760px,82%);border:1px solid var(--line);background:var(--panel);border-radius:16px;padding:13px 15px;line-height:1.6;white-space:pre-wrap}.msg.user .bubble{background:var(--brand);color:var(--bg);border-color:transparent;border-bottom-right-radius:5px}.meta{font-size:11px;color:var(--muted);margin:0 4px 5px}.msg.user .meta{text-align:right}.planCard{margin:10px 0;max-width:860px;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:17px;box-shadow:var(--shadow)}.planHead{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.planTitle{font-size:16px;font-weight:800}.routeBadge,.statusBadge{font-size:11px;padding:5px 8px;border-radius:999px;background:var(--panel2);color:var(--muted);white-space:nowrap}.statusBadge.wait{background:#fff7ed;color:#b45309}.statusBadge.run{background:#eff6ff;color:#2563eb}.statusBadge.done{background:#ecfdf3;color:#067647}.statusBadge.fail{background:#fef3f2;color:#b42318}.planText{color:var(--muted);font-size:13px;line-height:1.7;margin:9px 0 13px}.steps{display:grid;gap:7px;margin:10px 0}.step{display:flex;gap:9px;font-size:13px}.stepN{flex:0 0 22px;height:22px;border-radius:7px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-weight:800;font-size:11px}.miniCols{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.mini{background:var(--panel2);border-radius:11px;padding:10px 11px;font-size:12px;line-height:1.6}.mini strong{display:block;margin-bottom:3px}.files{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.fileChip{border:1px solid var(--line);background:var(--panel2);border-radius:10px;padding:7px 9px;font-size:12px;cursor:pointer;color:var(--text)}
+.composer{background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:10px}.composer textarea{resize:none;min-height:58px;max-height:150px;border:0;padding:8px 9px;background:transparent;box-shadow:none}.composer textarea:focus{box-shadow:none}.composerBar{display:flex;justify-content:space-between;align-items:center;padding:5px 4px 2px;gap:8px}.attachList{display:flex;gap:6px;flex-wrap:wrap;padding:0 7px}.attachTag{font-size:11px;background:var(--panel2);border:1px solid var(--line);padding:5px 8px;border-radius:999px}.mic.active{background:#fee4e2;color:#b42318;border-color:#fecdca}.composerHint{font-size:11px;color:var(--muted)}
+/* table */
+.tableWrap{overflow:auto;border:1px solid var(--line);border-radius:14px}table{width:100%;border-collapse:collapse;font-size:12px;min-width:850px}th,td{padding:11px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}th{position:sticky;top:0;background:var(--panel2);color:var(--muted);font-weight:750}tr:last-child td{border-bottom:0}.taskLink{font-weight:750;cursor:pointer;color:var(--text)}
+/* channels */
+.channelStatus{display:flex;gap:12px;align-items:center;padding:14px;border-radius:14px;background:var(--panel2);margin-bottom:14px}.channelIcon{width:42px;height:42px;border-radius:13px;background:#dcfce7;display:grid;place-items:center;font-size:20px}.qr{width:245px;height:245px;object-fit:contain;border:1px solid var(--line);border-radius:14px;background:white;display:none;margin-top:14px}
+.kbd{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;border:1px solid var(--line);background:var(--panel2);border-radius:6px;padding:2px 5px;font-size:11px}.sectionTitle{font-size:15px;margin:0 0 4px}.divider{height:1px;background:var(--line);margin:18px 0}.toast{position:fixed;right:22px;bottom:22px;background:var(--brand);color:var(--bg);padding:11px 14px;border-radius:11px;box-shadow:var(--shadow);z-index:50;opacity:0;transform:translateY(8px);pointer-events:none;transition:.2s}.toast.show{opacity:1;transform:none}
+@media(max-width:900px){.app{grid-template-columns:76px 1fr}.brand .brandText,.nav .label,.sideFoot .txt{display:none}.brand{justify-content:center}.nav button{justify-content:center}.grid2,.grid3,.miniCols{grid-template-columns:1fr}.content{padding:18px}.topbar{padding:0 18px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><div class="logo">智</div><div class="brandText"><h1>小智电脑助手</h1><small>v0.2.0 · 本机工作台</small></div></div>
+    <nav class="nav">
+      <button class="active" data-page="chat"><span class="ico">◉</span><span class="label">对话</span></button>
+      <button data-page="tasks"><span class="ico">☷</span><span class="label">任务</span></button>
+      <button data-page="automation"><span class="ico">◷</span><span class="label">自动化</span></button>
+      <button data-page="channels"><span class="ico">⌁</span><span class="label">渠道</span></button>
+      <button data-page="settings"><span class="ico">⚙</span><span class="label">设置</span></button>
+    </nav>
+    <div class="sideFoot">
+      <div class="sideStatus"><span id="sideWxDot" class="dot"></span><span class="txt" id="sideWx">微信未连接</span></div>
+      <div class="sideStatus"><span id="sideApiDot" class="dot"></span><span class="txt" id="sideApi">Planner 未配置</span></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar"><div><div class="topTitle" id="topTitle">对话</div></div><div class="topMeta"><span class="chip" id="topModel">Planner · -</span><span class="chip" id="topTasks">0 个任务</span><button class="iconBtn" id="themeBtn" title="切换深浅色">◐</button></div></header>
+    <div class="content">
+      <section class="page active" id="page-chat">
+        <div class="chatShell">
+          <div class="chatList" id="chatList"></div>
+          <div class="composer">
+            <div class="attachList" id="attachList"></div>
+            <textarea id="chatInput" placeholder="直接告诉小智你想做什么。小智会先整理计划，等你确认后再执行。"></textarea>
+            <div class="composerBar">
+              <div class="actions">
+                <button class="iconBtn" id="attachBtn" title="添加附件">＋</button>
+                <input id="fileInput" type="file" multiple style="display:none"/>
+                <button class="iconBtn mic" id="micBtn" title="语音输入">●</button>
+                <span class="composerHint" id="voiceHint">语音会先转成文字，不会直接执行</span>
+              </div>
+              <div class="actions"><span class="composerHint"><span class="kbd">Ctrl</span> + <span class="kbd">Enter</span> 发送</span><button class="btn accent" id="sendBtn">发送任务</button></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="page-tasks">
+        <div class="pageTitle"><div><h2>任务中心</h2><p>计划、执行、版本、审批与交付都落在这里。</p></div><button class="btn secondary" onclick="refresh()">刷新</button></div>
+        <div class="grid3" style="margin-bottom:16px"><div class="card stat"><b id="statPending">0</b><span>待确认计划</span></div><div class="card stat"><b id="statRunning">0</b><span>执行中</span></div><div class="card stat"><b id="statDone">0</b><span>已完成</span></div></div>
+        <div class="card pad"><div class="tableWrap"><table><thead><tr><th>任务</th><th>来源</th><th>状态</th><th>路由</th><th>模型/版本</th><th>最后动作</th><th>交付</th><th>错误</th></tr></thead><tbody id="taskRows"></tbody></table></div></div>
+      </section>
+
+      <section class="page" id="page-automation">
+        <div class="pageTitle"><div><h2>自动化</h2><p>当前先统一展示已经持久化的定时任务；长期 Monitor 会继续复用这一层。</p></div></div>
+        <div id="automationList" class="grid2"></div>
+      </section>
+
+      <section class="page" id="page-channels">
+        <div class="pageTitle"><div><h2>渠道</h2><p>远程用微信，坐在电脑旁就直接使用桌面对话与语音。</p></div></div>
+        <div class="grid2">
+          <div class="card pad">
+            <h3 class="sectionTitle">微信 Claw / WeixinChannel</h3><p class="hint">只负责收发消息与文件。任务理解、审批与执行由 Task Center 负责。</p>
+            <div class="channelStatus"><div class="channelIcon">微</div><div><b id="wxState">读取中…</b><div class="hint" id="wxDetail">协议 2.4.9</div></div></div>
+            <div class="actions"><button class="btn accent" onclick="loginWx(false)">连接微信</button><button class="btn secondary" onclick="loginWx(true)">重新扫码</button><button class="btn secondary" onclick="startWx()">开始监听</button><button class="btn secondary" onclick="stopWx()">停止监听</button></div>
+            <img id="qr" class="qr" alt="微信登录二维码"/>
+            <div id="verifyArea" style="display:none"><div class="field"><label>手机显示的验证码</label><div class="row"><input id="verifyCode" class="input grow"/><button class="btn" onclick="submitVerify()">提交</button></div></div></div>
+          </div>
+          <div class="card pad">
+            <h3 class="sectionTitle">电脑对话与语音</h3><p class="hint">桌面输入和微信输入进入同一个 Planner → 审批 → Task Center → Local / Direct / Harness 流程。</p>
+            <div class="notice" style="margin-top:14px">语音输入使用 Edge/Chrome 提供的 Web Speech 能力：点击麦克风说话，识别结果会先放进输入框。你发送后仍然只生成计划，不会直接执行。</div>
+            <div class="divider"></div>
+            <div><b>当前语言</b><div class="hint" id="speechLangLabel">zh-CN</div></div>
+            <div style="margin-top:14px"><button class="btn secondary" onclick="showPage('chat')">回到桌面对话</button></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="page-settings">
+        <div class="pageTitle"><div><h2>设置</h2><p>Planner、普通文字任务和 Harness 可以使用不同模型。</p></div><button class="btn accent" onclick="saveConfig()">保存全部设置</button></div>
+        <div class="grid2">
+          <div class="card pad">
+            <h3 class="sectionTitle">模型路由</h3>
+            <div class="notice">建议：Planner 可用 GPT-5.6 Sol 做理解/计划；Direct 可按成本选择 DeepSeek 或 GPT；复杂工具任务仍由当前 DeepSeek Harness 执行。</div>
+            <div class="field"><label>Planner 提供方</label><select id="plannerProvider"><option value="deepseek">DeepSeek</option><option value="openai">OpenAI</option></select></div>
+            <div class="field"><label>Planner 模型</label><input class="input" id="plannerModel" list="modelHints"/></div>
+            <div class="field"><label>Direct 提供方</label><select id="directProvider"><option value="deepseek">DeepSeek</option><option value="openai">OpenAI</option></select></div>
+            <div class="field"><label>Direct 模型</label><input class="input" id="directModel" list="modelHints"/></div>
+            <div class="field"><label>Harness 模型（当前 DeepSeek Harness）</label><input class="input" id="harnessModel" list="deepseekHints"/></div>
+            <datalist id="modelHints"><option value="deepseek-flash"></option><option value="deepseek-v4-pro"></option><option value="gpt-5.6-sol"></option><option value="gpt-5.6"></option><option value="gpt-5.6-terra"></option><option value="gpt-5.6-luna"></option></datalist>
+            <datalist id="deepseekHints"><option value="deepseek-flash"></option><option value="deepseek-v4-pro"></option></datalist>
+          </div>
+          <div class="card pad">
+            <h3 class="sectionTitle">API Keys</h3>
+            <div class="field"><label>DeepSeek API Key</label><input id="deepseekKey" class="input" type="password" placeholder="留空表示保留已保存 Key"/></div>
+            <div class="field"><label>OpenAI API Key</label><input id="openaiKey" class="input" type="password" placeholder="留空表示保留已保存 Key"/></div>
+            <div class="actions"><button class="btn secondary" onclick="testApi('deepseek')">测试 DeepSeek</button><button class="btn secondary" onclick="testApi('openai')">测试 OpenAI</button></div>
+            <div class="field"><label>DeepSeek Base URL</label><input id="deepseekBase" class="input"/></div>
+            <div class="field"><label>OpenAI Base URL</label><input id="openaiBase" class="input"/></div>
+            <div id="apiMsg" class="hint"></div>
+          </div>
+          <div class="card pad">
+            <h3 class="sectionTitle">工作空间与 Harness</h3>
+            <div class="field"><label>Harness 工作空间</label><div class="row"><input id="workspace" class="input grow"/><button class="btn secondary" onclick="browse()">选择</button></div></div>
+            <div class="check"><input id="safe" type="checkbox"/><span>优先安全模式。Windows 0.1.5rc1 在开启兼容回退时仍会采用已验证的 full-access 兼容路径。</span></div>
+            <div class="check"><input id="fallback" type="checkbox"/><span>允许 Windows Harness danger-full-access 兼容模式。仅建议个人 MVP 使用。</span></div>
+            <div class="warning notice">Harness full-access 不是商业版安全隔离方案。确定性本地操作仍优先走白名单 Local Driver。</div>
+            <div class="actions" style="margin-top:12px"><button class="btn secondary" onclick="openWorkspace()">打开工作空间</button><button class="btn secondary" onclick="openLogs()">打开日志</button></div>
+          </div>
+          <div class="card pad">
+            <h3 class="sectionTitle">审批与语音</h3>
+            <div class="field"><label>任务执行策略</label><select id="approvalMode"><option value="plan_first">先计划 → 我确认 → 再执行（推荐）</option></select></div>
+            <div class="field"><label>语音识别语言</label><select id="speechLanguage"><option value="zh-CN">中文（普通话）</option><option value="en-US">English (US)</option></select></div>
+            <p class="hint">v0.2 默认所有新任务先生成计划。计划确认和最终文件版本审批是两层不同的确认。</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const $=id=>document.getElementById(id);
+let appState={status:null,tasks:[],attachments:[],lastTaskFingerprint:'',notified:new Set(JSON.parse(localStorage.getItem('xzNotified')||'[]'))};
+const pageNames={chat:'对话',tasks:'任务',automation:'自动化',channels:'渠道',settings:'设置'};
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function nl(s){return esc(s).replace(/\n/g,'<br>')}
+async function jget(url){const r=await fetch(url,{cache:'no-store'});const x=await r.json();if(!r.ok||x.ok===false)throw new Error(x.error||('HTTP '+r.status));return x}
+async function jpost(url,data={}){const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});const x=await r.json();if(!r.ok||x.ok===false)throw new Error(x.error||('HTTP '+r.status));return x}
+function toast(t){const el=$('toast');el.textContent=t;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2600)}
+function showPage(name){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.page===name));$('page-'+name).classList.add('active');$('topTitle').textContent=pageNames[name]||name;if(name==='chat')setTimeout(()=>scrollChat(false),20)}
+document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>showPage(b.dataset.page));
+function statusClass(s){if(['completed','awaiting_review'].includes(s))return'done';if(['running','queued'].includes(s))return'run';if(s==='awaiting_approval')return'wait';if(['failed','cancelled'].includes(s))return'fail';return''}
+function routeName(r){return({local:'本地执行',direct:'一次大模型',harness:'Harness'}[r]||r||'-')}
+function sourceName(c){return c==='weixin'?'微信':'电脑'}
+function fmtTime(x){if(!x)return'';try{return new Date(x).toLocaleString()}catch{return x}}
+function planHtml(t){const p=t.plan||{};if(!Object.keys(p).length)return'';const steps=(p.steps||[]).map((x,i)=>`<div class="step"><span class="stepN">${i+1}</span><span>${esc(x)}</span></div>`).join('');const risks=(p.risks||[]).map(x=>'• '+esc(x)).join('<br>');const recs=(p.recommendations||[]).map(x=>'• '+esc(x)).join('<br>');const blockers=(p.blockers||[]).map(x=>'• '+esc(x)).join('<br>');let actions='';if(t.status==='awaiting_approval'){actions=`<div class="actions" style="margin-top:14px"><button class="btn accent small" onclick="approvePlan('${t.task_id}')">开始执行</button><button class="btn secondary small" onclick="replanPrompt('${t.task_id}')">修改计划</button><button class="btn danger small" onclick="cancelPlan('${t.task_id}')">取消</button></div>`}return `<div class="planCard"><div class="planHead"><div><div class="planTitle">${esc(p.title||'执行计划')}</div><div class="meta" style="margin:4px 0 0">${esc(t.task_id)} · ${esc(sourceName(t.channel))}</div></div><div><span class="routeBadge">${esc(routeName(t.route))}</span> <span class="statusBadge ${statusClass(t.status)}">${esc(t.status)}</span></div></div><div class="planText">${nl(p.understanding||'')}</div><div class="steps">${steps}</div>${(recs||risks||blockers)?`<div class="miniCols">${recs?`<div class="mini"><strong>执行前建议</strong>${recs}</div>`:''}${risks?`<div class="mini"><strong>注意</strong>${risks}</div>`:''}${blockers?`<div class="mini" style="border:1px solid #fecdca"><strong>当前阻塞</strong>${blockers}</div>`:''}</div>`:''}${(p.expected_outputs||[]).length?`<div class="hint" style="margin-top:11px">预计交付：${esc((p.expected_outputs||[]).join('、'))}${p.estimated_minutes?' · 约 '+esc(p.estimated_minutes)+' 分钟':''}</div>`:''}${actions}</div>`}
+function filesHtml(t){const fs=t.output_files||[];if(!fs.length)return'';return `<div class="files">${fs.map(p=>`<button class="fileChip" onclick='openPath(${JSON.stringify(p)})'>▣ ${esc(p.split(/[\\/]/).pop())}</button>`).join('')}</div>`}
+function taskResultHtml(t){if(!t.result_text&&!t.error&&t.status!=='awaiting_review')return'';let body=t.error?`<span style="color:var(--red)">${nl(t.error)}</span>`:nl(t.result_text||'文件已经生成，等待审核。');let buttons='';if(t.status==='awaiting_review')buttons=`<div class="actions" style="margin-top:10px"><button class="btn accent small" onclick="approveOutput('${t.task_id}')">批准当前版本</button><button class="btn secondary small" onclick="sendRevision('${t.task_id}')">提出修改</button></div>`;return `<div class="msg"><div class="meta">小智 · ${esc(t.latest_action||t.status)}</div><div class="bubble">${body}${filesHtml(t)}${buttons}</div></div>`}
+function renderChat(){const rows=[...appState.tasks].reverse();const el=$('chatList');if(!rows.length){el.innerHTML=`<div class="empty"><div><div class="orb">智</div><h3>把工作交给小智</h3><div>文字、语音、文件都可以。先给你计划，确认后才真正执行。</div><div class="quick"><button onclick="quick('整理桌面上的销售表，分析异常并做一份PPT')">整理销售表</button><button onclick="quick('五分钟后提醒我休息一下')">定时提醒</button><button onclick="quick('帮我写一份项目周报')">写周报</button></div></div></div>`;return}el.innerHTML=rows.map(t=>`<div class="msg user"><div><div class="meta">${esc(sourceName(t.channel))} · ${fmtTime(t.created_at)}</div><div class="bubble">${nl(t.original_message||'(附件任务)')}</div></div></div>${planHtml(t)}${taskResultHtml(t)}`).join('');}
+function scrollChat(force=true){const e=$('chatList');if(force||e.scrollHeight-e.scrollTop-e.clientHeight<180)e.scrollTop=e.scrollHeight}
+function renderTasks(){const rows=appState.tasks;$('statPending').textContent=rows.filter(x=>x.status==='awaiting_approval').length;$('statRunning').textContent=rows.filter(x=>['running','queued'].includes(x.status)).length;$('statDone').textContent=rows.filter(x=>x.status==='completed').length;$('taskRows').innerHTML=rows.map(t=>`<tr><td><span class="taskLink" onclick="showTask('${t.task_id}')">${esc(t.task_id)}</span><div class="hint">${esc((t.plan||{}).title||'')}</div></td><td>${esc(sourceName(t.channel))}</td><td><span class="statusBadge ${statusClass(t.status)}">${esc(t.status)}</span></td><td>${esc(routeName(t.route))}</td><td>${t.planner_model?esc(t.planner_model):'-'} / V${esc(t.version||0)}</td><td>${esc(t.latest_action||'')}</td><td>${esc([t.delivery_channel,t.delivery_contact].filter(Boolean).join(':')||'-')}</td><td style="color:var(--red);max-width:240px">${esc(t.error||'')}</td></tr>`).join('')||'<tr><td colspan="8" class="hint">暂无任务</td></tr>'}
+function renderAutomation(){const rows=appState.tasks.filter(t=>t.scheduled_at);const el=$('automationList');el.innerHTML=rows.map(t=>`<div class="card pad"><div class="planHead"><div><b>${esc((t.plan||{}).title||t.original_message||t.task_id)}</b><div class="hint">${esc(t.task_id)}</div></div><span class="statusBadge ${statusClass(t.status)}">${esc(t.status)}</span></div><div class="divider"></div><div class="hint">执行时间</div><div style="margin:4px 0 10px"><b>${esc(fmtTime(t.scheduled_at))}</b></div><div class="hint">动作：${esc(t.scheduled_action||'等待计划确认')} · 交付：${esc(t.delivery_channel||'-')}</div></div>`).join('')||'<div class="card pad"><b>还没有定时任务</b><p class="hint">你可以直接说“明天早上9点提醒我开会”或“5分钟后给王总发一句……”</p></div>'}
+function renderChannels(s){const w=s.weixin||{};$('wxState').textContent=w.status||'disconnected';$('wxDetail').textContent=(w.detail||'')+' · 协议 '+(w.protocol||'2.4.9');$('sideWx').textContent=['ready','polling','connected'].includes(w.status)?'微信已连接':'微信 '+(w.status||'未连接');$('sideWxDot').className='dot '+(['ready','polling','connected'].includes(w.status)?'ok':'');if(['qr_ready','scanned','need_verifycode'].includes(w.status)){$('qr').style.display='block';$('qr').src='/api/weixin/qr?t='+Date.now()}else $('qr').style.display='none';$('verifyArea').style.display=w.status==='need_verifycode'?'block':'none';$('speechLangLabel').textContent=s.speech_language||'zh-CN'}
+function fillSettings(s){$('workspace').value=s.workspace||'';$('plannerProvider').value=s.planner_provider||'deepseek';$('plannerModel').value=s.planner_model||'deepseek-flash';$('directProvider').value=s.direct_provider||'deepseek';$('directModel').value=s.direct_model||'deepseek-flash';$('harnessModel').value=s.model||'deepseek-flash';$('deepseekBase').value=s.deepseek_base_url||'https://api.deepseek.com';$('openaiBase').value=s.openai_base_url||'https://api.openai.com/v1';$('approvalMode').value=s.approval_mode||'plan_first';$('speechLanguage').value=s.speech_language||'zh-CN';$('safe').checked=!!s.harness_safe_mode;$('fallback').checked=!!s.allow_harness_full_access_fallback}
+function maybeDesktopNotify(tasks){if(!('Notification'in window))return;for(const t of tasks){if(t.channel==='desktop'&&t.status==='completed'&&t.latest_action==='scheduled_desktop_notification'&&!appState.notified.has(t.task_id)){appState.notified.add(t.task_id);localStorage.setItem('xzNotified',JSON.stringify([...appState.notified].slice(-100)));if(Notification.permission==='granted')new Notification('小智提醒',{body:t.result_text||t.original_message||'定时任务已到时间'})}}}
+async function refresh(){try{const s=await jget('/api/status');const oldFingerprint=appState.lastTaskFingerprint;appState.status=s;appState.tasks=s.tasks||[];appState.lastTaskFingerprint=appState.tasks.map(x=>x.task_id+':'+x.status+':'+x.latest_action).join('|');$('topModel').textContent='Planner · '+(s.planner_model||'-');$('topTasks').textContent=appState.tasks.length+' 个任务';$('sideApi').textContent=(s.planner_provider==='openai'?(s.openai_api_configured?'OpenAI 已配置':'OpenAI 未配置'):(s.deepseek_api_configured?'DeepSeek 已配置':'DeepSeek 未配置'));$('sideApiDot').className='dot '+(s.configured?'ok':'warn');renderChannels(s);renderChat();renderTasks();renderAutomation();if(!window._settingsFilled){fillSettings(s);window._settingsFilled=true}maybeDesktopNotify(appState.tasks);if(oldFingerprint&&oldFingerprint!==appState.lastTaskFingerprint)scrollChat(false)}catch(e){console.error(e)}}
+function quick(t){$('chatInput').value=t;$('chatInput').focus()}
+$('attachBtn').onclick=()=>$('fileInput').click();$('fileInput').onchange=e=>{appState.attachments=[...e.target.files];renderAttach()};function renderAttach(){$('attachList').innerHTML=appState.attachments.map((f,i)=>`<span class="attachTag">${esc(f.name)} · ${(f.size/1024).toFixed(0)}KB <b style="cursor:pointer" onclick="removeAttach(${i})">×</b></span>`).join('')}function removeAttach(i){appState.attachments.splice(i,1);renderAttach()}
+async function fileB64(f){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result).split(',')[1]||'');r.onerror=rej;r.readAsDataURL(f)})}
+async function sendChat(){const text=$('chatInput').value.trim();if(!text&&!appState.attachments.length)return;const btn=$('sendBtn');btn.disabled=true;try{const at=[];for(const f of appState.attachments)at.push({name:f.name,data_base64:await fileB64(f)});$('chatInput').value='';appState.attachments=[];renderAttach();await jpost('/api/chat/send',{text,attachments:at});await refresh();scrollChat();}catch(e){toast('发送失败：'+e.message)}finally{btn.disabled=false}}
+$('sendBtn').onclick=sendChat;$('chatInput').addEventListener('keydown',e=>{if(e.ctrlKey&&e.key==='Enter'){e.preventDefault();sendChat()}})
+async function approvePlan(id){try{await jpost(`/api/tasks/${id}/approve`);toast('已确认，开始执行');await refresh()}catch(e){toast(e.message)}}async function cancelPlan(id){if(!confirm('确定取消这个计划？'))return;try{await jpost(`/api/tasks/${id}/cancel`);await refresh()}catch(e){toast(e.message)}}async function replanPrompt(id){const x=prompt('你希望怎么修改计划？');if(!x)return;try{await jpost(`/api/tasks/${id}/replan`,{instruction:x});await refresh();scrollChat()}catch(e){toast(e.message)}}async function approveOutput(id){try{await jpost(`/api/tasks/${id}/approve-output`,{});toast('当前版本已锁定批准');await refresh()}catch(e){toast(e.message)}}function sendRevision(id){const x=prompt('请输入修改要求，例如：第二页简单一点');if(!x)return;$('chatInput').value=x;showPage('chat');sendChat()}
+async function showTask(id){try{const x=await jget('/api/tasks/'+id);showPage('chat');setTimeout(()=>{const node=[...document.querySelectorAll('.planCard')].find(n=>n.textContent.includes(id));if(node)node.scrollIntoView({behavior:'smooth',block:'center'})},50)}catch(e){toast(e.message)}}async function openPath(path){try{await jpost('/api/open-path',{path})}catch(e){toast(e.message)}}
+async function browse(){try{const x=await jpost('/api/browse-workspace');if(x.path)$('workspace').value=x.path}catch(e){toast(e.message)}}async function saveConfig(){try{const data={workspace:$('workspace').value,planner_provider:$('plannerProvider').value,planner_model:$('plannerModel').value,direct_provider:$('directProvider').value,direct_model:$('directModel').value,model:$('harnessModel').value,deepseek_api_key:$('deepseekKey').value,openai_api_key:$('openaiKey').value,deepseek_base_url:$('deepseekBase').value,openai_base_url:$('openaiBase').value,approval_mode:$('approvalMode').value,speech_language:$('speechLanguage').value,harness_safe_mode:$('safe').checked,allow_harness_full_access_fallback:$('fallback').checked,auto_start_weixin:true};await jpost('/api/config',data);$('deepseekKey').value='';$('openaiKey').value='';window._settingsFilled=false;toast('设置已保存');await refresh()}catch(e){toast('保存失败：'+e.message)}}async function testApi(provider){$('apiMsg').textContent='正在测试 '+provider+'…';try{const x=await jpost('/api/test-api',{provider});$('apiMsg').textContent='✓ '+x.response}catch(e){$('apiMsg').textContent='测试失败：'+e.message}}
+async function loginWx(force){try{await jpost('/api/weixin/login',{force});setTimeout(refresh,600)}catch(e){toast(e.message)}}async function submitVerify(){try{await jpost('/api/weixin/verify',{code:$('verifyCode').value});$('verifyCode').value=''}catch(e){toast(e.message)}}async function startWx(){try{await jpost('/api/weixin/start');refresh()}catch(e){toast(e.message)}}async function stopWx(){try{await jpost('/api/weixin/stop');refresh()}catch(e){toast(e.message)}}async function openWorkspace(){try{await jpost('/api/open-workspace')}catch(e){toast(e.message)}}async function openLogs(){try{await jpost('/api/open-logs')}catch(e){toast(e.message)}}
+// Voice input: browser speech recognition -> textarea -> explicit Send -> Planner gate.
+let recognition=null,recognizing=false;function setupVoice(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){$('voiceHint').textContent='当前浏览器不支持语音识别，可直接键盘输入';$('micBtn').disabled=true;return}recognition=new SR();recognition.continuous=false;recognition.interimResults=true;recognition.lang=(appState.status&&appState.status.speech_language)||'zh-CN';let base='';recognition.onstart=()=>{recognizing=true;$('micBtn').classList.add('active');base=$('chatInput').value.trim();$('voiceHint').textContent='正在听…松口后会显示文字'};recognition.onresult=e=>{let final='',interim='';for(let i=e.resultIndex;i<e.results.length;i++){const txt=e.results[i][0].transcript;if(e.results[i].isFinal)final+=txt;else interim+=txt}$('chatInput').value=[base,final||interim].filter(Boolean).join(base?' ':'')};recognition.onend=()=>{recognizing=false;$('micBtn').classList.remove('active');$('voiceHint').textContent='语音已转成文字，发送后先生成计划'};recognition.onerror=e=>{recognizing=false;$('micBtn').classList.remove('active');$('voiceHint').textContent='语音识别失败：'+e.error};$('micBtn').onclick=()=>{recognition.lang=(appState.status&&appState.status.speech_language)||'zh-CN';if(recognizing)recognition.stop();else recognition.start()}}
+// drag files into composer
+document.addEventListener('dragover',e=>e.preventDefault());document.addEventListener('drop',e=>{e.preventDefault();if(e.dataTransfer&&e.dataTransfer.files.length){appState.attachments=[...e.dataTransfer.files];renderAttach();showPage('chat')}});
+// theme
+const savedTheme=localStorage.getItem('xzTheme');if(savedTheme)document.documentElement.dataset.theme=savedTheme;$('themeBtn').onclick=()=>{const next=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=next;localStorage.setItem('xzTheme',next)};
+if('Notification'in window&&Notification.permission==='default')Notification.requestPermission().catch(()=>{});
+setupVoice();refresh();setInterval(refresh,2500);
+</script>
+</body>
+</html>

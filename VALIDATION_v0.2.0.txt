@@ -1,0 +1,15 @@
+XiaoZhi Desktop Agent v0.2.0 source validation
+
+Checks run before packaging:
+- Python compileall: PASS
+- Task Center / Planner / plan approval gate self-check: PASS
+- OpenAI Responses request-shape self-check (no network): PASS
+- Scheduled local/Weixin delivery self-check: PASS
+- Harness policy/Office output policy self-check: PASS
+- UI JavaScript syntax: PASS
+- GitHub Actions YAML parse: PASS
+- Version consistency: PASS
+- Private-machine identifier scan: PASS
+
+Note:
+This source package was validated in a Linux build container. The local container does not have pycryptodome installed, so the source self-check used an import-only Crypto shim; AES itself was not exercised here. The GitHub Windows workflow installs the pinned real dependencies, runs scripts/selfcheck.py with real pycryptodome/DPAPI, builds XiaoZhiSetup.exe, silently installs it on windows-latest, reruns the self-check, validates HKCU autostart, and uninstalls it.
